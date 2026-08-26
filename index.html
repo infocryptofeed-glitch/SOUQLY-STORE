@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Souqly — Shop with Cash on Delivery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#12151C;
+    --ink-soft:#5B6270;
+    --paper:#FAF7F1;
+    --surface:#FFFFFF;
+    --primary:#0B6B58;
+    --primary-dark:#084C3E;
+    --accent:#E8A33D;
+    --accent-deep:#C97F1E;
+    --alert:#C1442D;
+    --line:#E4DFD2;
+    --shadow:0 8px 24px rgba(18,21,28,.08);
+    --shadow-lg:0 16px 40px rgba(18,21,28,.14);
+    --radius:6px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;}
+  h1,h2,h3{font-family:'Fraunces',serif;letter-spacing:-0.01em;margin:0 0 .3em;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  a{color:inherit;}
+  button{font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;border:none;}
+  img{max-width:100%;display:block;}
+  .wrap{max-width:1140px;margin:0 auto;padding:0 20px;}
+
+  /* ---------------- topbar ---------------- */
+  .topbar{background:var(--ink);color:#cdd3da;font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:.03em;}
+  .topbar .wrap{display:flex;justify-content:space-between;align-items:center;padding:7px 20px;gap:12px;flex-wrap:wrap;}
+  .topbar .trust{display:flex;gap:18px;flex-wrap:wrap;}
+  .topbar .socials{display:flex;gap:14px;}
+  .topbar .socials a{opacity:.85;display:flex;align-items:center;gap:5px;}
+  .topbar .socials a:hover{opacity:1;color:var(--accent);}
+  .topbar svg{width:14px;height:14px;fill:currentColor;}
+
+  /* ---------------- header ---------------- */
+  header.site{background:var(--surface);position:sticky;top:0;z-index:50;box-shadow:0 1px 0 var(--line);}
+  .header-row{display:flex;align-items:center;gap:22px;padding:16px 20px;}
+  .brand{display:flex;align-items:baseline;gap:2px;flex-shrink:0;}
+  .brand h1{font-size:26px;color:var(--ink);}
+  .brand h1 span{color:var(--primary);}
+  .search-wrap{flex:1;position:relative;max-width:480px;}
+  .search-wrap input{width:100%;padding:11px 16px 11px 40px;border:1.5px solid var(--line);border-radius:999px;font-size:14px;background:var(--paper);transition:border-color .15s;}
+  .search-wrap input:focus{outline:none;border-color:var(--primary);background:var(--surface);}
+  .search-wrap svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:16px;height:16px;stroke:var(--ink-soft);fill:none;}
+  .header-cta{flex-shrink:0;}
+
+  /* ---------------- category nav ---------------- */
+  nav.catnav{background:var(--surface);border-bottom:1px solid var(--line);}
+  .catnav-row{display:flex;align-items:center;gap:8px;padding:10px 20px;overflow-x:auto;scrollbar-width:none;position:relative;}
+  .catnav-row::-webkit-scrollbar{display:none;}
+  .chip{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.03em;text-transform:uppercase;padding:7px 14px;border:1.3px solid var(--line);border-radius:3px;background:var(--surface);color:var(--ink-soft);white-space:nowrap;flex-shrink:0;transition:all .15s;}
+  .chip:hover{border-color:var(--primary);color:var(--primary);}
+  .chip.active{background:var(--ink);border-color:var(--ink);color:#fff;}
+  .more-wrap{position:relative;flex-shrink:0;}
+  .more-dd{position:absolute;top:calc(100% + 6px);left:0;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow-lg);border-radius:6px;min-width:160px;display:none;z-index:60;overflow:hidden;}
+  .more-dd.open{display:block;}
+  .more-dd button{display:block;width:100%;text-align:left;padding:10px 14px;font-size:13px;background:none;color:var(--ink);border-bottom:1px solid var(--line);}
+  .more-dd button:last-child{border-bottom:none;}
+  .more-dd button:hover{background:var(--paper);}
+
+  /* ---------------- hero ---------------- */
+  .hero{position:relative;overflow:hidden;background:radial-gradient(120% 140% at 15% 0%, #0f5647 0%, var(--ink) 62%);color:#fff;}
+  .hero::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 85% 30%, rgba(232,163,61,.28), transparent 55%);pointer-events:none;}
+  .hero .wrap{position:relative;padding:64px 20px 52px;display:grid;grid-template-columns:1.15fr .85fr;gap:36px;align-items:center;}
+  @media (max-width:760px){.hero .wrap{grid-template-columns:1fr;padding:44px 20px 36px;}}
+  .hero h2{font-size:clamp(32px,5vw,50px);line-height:1.04;color:#fff;margin-bottom:14px;}
+  .hero h2 em{font-style:normal;color:var(--accent);}
+  .hero p.lede{font-size:16px;color:#d8ddd8;max-width:44ch;margin-bottom:24px;}
+  .badge-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:26px;}
+  .badge{display:flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);padding:6px 12px;border-radius:999px;}
+  .badge svg{width:13px;height:13px;fill:var(--accent);}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:999px;font-weight:700;font-size:14.5px;text-decoration:none;transition:transform .12s, box-shadow .12s;}
+  .btn:active{transform:translateY(1px);}
+  .btn-accent{background:var(--accent);color:var(--ink);box-shadow:0 6px 20px rgba(232,163,61,.35);}
+  .btn-accent:hover{background:var(--accent-deep);}
+  .btn-outline{background:transparent;border:1.5px solid rgba(255,255,255,.5);color:#fff;}
+  .btn-outline:hover{border-color:#fff;}
+  .cta-row{display:flex;gap:12px;flex-wrap:wrap;}
+  .tag-card{background:var(--surface);color:var(--ink);border-radius:10px;padding:24px;box-shadow:var(--shadow-lg);}
+  .tag-card .rc-title{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);border-bottom:1px dashed var(--line);padding-bottom:10px;margin-bottom:12px;}
+  .tag-card .rc-line{display:flex;align-items:flex-start;gap:10px;font-size:13.5px;padding:7px 0;}
+  .tag-card .rc-line .num{font-family:'IBM Plex Mono',monospace;background:var(--paper);color:var(--primary);width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;font-weight:600;}
+
+  /* ---------------- products ---------------- */
+  .section{max-width:1140px;margin:0 auto;padding:44px 20px 60px;}
+  .section-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:8px;}
+  .section-head h2{font-size:26px;}
+  .section-head .count{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-soft);}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:20px;}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:10px;display:flex;flex-direction:column;overflow:hidden;transition:transform .18s, box-shadow .18s;}
+  .card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);}
+  .card .thumb{aspect-ratio:1/1;background:#ECE6D8;overflow:hidden;position:relative;}
+  .card .thumb img{width:100%;height:100%;object-fit:cover;transition:transform .3s;}
+  .card:hover .thumb img{transform:scale(1.05);}
+  .card .cat-pill{position:absolute;top:10px;left:10px;background:rgba(18,21,28,.75);color:#fff;font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.05em;padding:4px 9px;border-radius:999px;}
+  .card .body{padding:16px;display:flex;flex-direction:column;gap:7px;flex:1;}
+  .card h3{font-size:16px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;}
+  .card .desc{font-size:12.5px;color:var(--ink-soft);flex:1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .card .price-row{display:flex;align-items:center;justify-content:space-between;}
+  .card .price{font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:600;color:var(--primary-dark);}
+  .mini-badges{display:flex;gap:6px;}
+  .mini-badges span{font-size:9.5px;font-family:'IBM Plex Mono',monospace;color:var(--primary);background:#e6f1ee;padding:2px 6px;border-radius:3px;}
+  .card .order-btn{margin-top:4px;background:var(--ink);color:#fff;padding:11px;font-weight:700;font-size:13px;letter-spacing:.02em;border-radius:6px;}
+  .card .order-btn:hover{background:var(--primary);}
+  .empty-state{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--ink-soft);padding:40px;text-align:center;border:1px dashed var(--line);border-radius:8px;grid-column:1/-1;}
+
+  /* ---------------- trust strip below hero ---------------- */
+  .mini-trust{background:var(--surface);border-bottom:1px solid var(--line);}
+  .mini-trust .wrap{display:flex;justify-content:center;gap:34px;padding:16px 20px;flex-wrap:wrap;}
+  .mini-trust .item{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink-soft);}
+  .mini-trust svg{width:17px;height:17px;fill:var(--primary);}
+
+  /* ---------------- footer ---------------- */
+  footer{background:var(--ink);color:#c9cfd6;padding:36px 20px 22px;font-size:13px;}
+  footer .wrap{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:26px;}
+  @media(max-width:700px){footer .wrap{grid-template-columns:1fr;}}
+  footer h4{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#8a919c;margin-bottom:12px;}
+  footer .brandfoot{font-family:'Fraunces',serif;font-size:20px;color:#fff;margin-bottom:8px;}
+  footer p{color:#9198a1;max-width:38ch;}
+  footer a{display:block;margin-bottom:8px;color:#c9cfd6;text-decoration:none;}
+  footer a:hover{color:var(--accent);}
+  .foot-bottom{max-width:1140px;margin:26px auto 0;padding-top:18px;border-top:1px solid #262b35;font-size:11.5px;color:#6f7680;font-family:'IBM Plex Mono',monospace;}
+
+  /* ---------------- floating whatsapp ---------------- */
+  .fab-wa{position:fixed;bottom:22px;right:22px;background:#1EBE57;color:#fff;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px rgba(30,190,87,.45);z-index:70;text-decoration:none;}
+  .fab-wa svg{width:28px;height:28px;fill:#fff;}
+  .fab-wa:hover{transform:scale(1.06);}
+
+  /* ---------------- modal ---------------- */
+  .overlay{position:fixed;inset:0;background:rgba(18,21,28,.6);display:none;align-items:center;justify-content:center;padding:16px;z-index:100;}
+  .overlay.open{display:flex;}
+  .modal{background:var(--surface);max-width:440px;width:100%;padding:28px;max-height:90vh;overflow:auto;position:relative;border-radius:12px;}
+  .modal h3{margin-bottom:4px;font-size:20px;}
+  .modal .sub{font-size:12px;color:var(--ink-soft);margin-bottom:18px;font-family:'IBM Plex Mono',monospace;}
+  .modal .close{position:absolute;top:16px;right:18px;background:none;font-size:22px;color:var(--ink-soft);line-height:1;}
+  .field{margin-bottom:13px;}
+  .field label{display:block;font-size:11.5px;font-weight:700;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft);}
+  .field input,.field textarea,.field select{width:100%;padding:11px;border:1.3px solid var(--line);background:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;border-radius:6px;}
+  .field textarea{resize:vertical;min-height:60px;}
+  .modal .btn-primary-full{width:100%;justify-content:center;background:var(--primary);color:#fff;padding:13px;margin-top:8px;border-radius:8px;font-weight:700;}
+  .modal .btn-primary-full:hover{background:var(--primary-dark);}
+  .success{display:none;text-align:center;padding:6px 0;}
+  .success.open{display:block;}
+  .success .token{font-family:'IBM Plex Mono',monospace;font-size:26px;font-weight:600;color:var(--primary);border:2px dashed var(--primary);padding:10px 16px;display:inline-block;margin:14px 0;border-radius:8px;}
+  .msg{font-size:12px;color:var(--alert);margin-top:6px;display:none;}
+  .msg.open{display:block;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <div class="trust">
+      <span>✓ Cash on Delivery</span>
+      <span>✓ Delivery all over Pakistan</span>
+    </div>
+    <div class="socials">
+      <a id="waTop" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21h.01c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm5.79 14.13c-.24.68-1.4 1.3-1.94 1.38-.5.08-1.12.11-1.81-.11-.42-.13-.95-.31-1.64-.6-2.88-1.24-4.75-4.13-4.9-4.32-.14-.19-1.17-1.56-1.17-2.98s.73-2.11.99-2.4c.26-.29.57-.36.76-.36l.55.01c.17.01.41-.06.64.49.24.58.81 2 .88 2.15.07.15.12.32.02.51-.1.19-.15.31-.29.48-.15.17-.31.37-.44.5-.15.15-.3.31-.13.6.17.29.76 1.25 1.63 2.02 1.12 1 2.06 1.31 2.35 1.46.29.15.46.13.63-.05.17-.19.71-.83.9-1.11.19-.29.38-.24.64-.14.26.1 1.65.78 1.93.92.29.15.48.22.55.34.07.13.07.72-.17 1.4z"/></svg>
+      </a>
+      <a id="igTop" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41-.56-.22-.96-.48-1.38-.9-.42-.42-.68-.82-.9-1.38-.16-.42-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41 1.27-.06 1.65-.07 4.85-.07M12 0C8.74 0 8.33.01 7.05.07c-1.28.06-2.15.26-2.91.56-.79.31-1.46.72-2.13 1.38C1.35 2.68.94 3.35.63 4.14.33 4.9.13 5.77.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.28.26 2.15.56 2.91.31.79.72 1.46 1.38 2.13.66.66 1.33 1.07 2.12 1.38.76.3 1.63.5 2.91.56 1.28.06 1.69.07 4.95.07s3.67-.01 4.95-.07c1.28-.06 2.15-.26 2.91-.56.79-.31 1.46-.72 2.12-1.38.66-.66 1.07-1.33 1.38-2.13.3-.76.5-1.63.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.28-.26-2.15-.56-2.91-.31-.79-.72-1.46-1.38-2.12C19.32 1.35 18.65.94 17.86.63c-.76-.3-1.63-.5-2.91-.56C13.67.01 13.26 0 12 0zm0 5.84A6.16 6.16 0 1 0 12 18.16 6.16 6.16 0 0 0 12 5.84zm0 10.16A4 4 0 1 1 12 8a4 4 0 0 1 0 8zm6.4-10.4a1.44 1.44 0 1 1-2.88 0 1.44 1.44 0 0 1 2.88 0z"/></svg>
+      </a>
+      <a id="ttTop" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M16.6 5.82s.51.5 0 0A4.28 4.28 0 0 1 15.54 3h-3.09v12.4a2.59 2.59 0 1 1-2.59-2.59c.19 0 .38.02.56.06V9.83a5.9 5.9 0 0 0-.56-.03A5.86 5.86 0 0 0 4 15.68 5.86 5.86 0 0 0 9.85 21.5a5.86 5.86 0 0 0 5.85-5.86V9.05a7.24 7.24 0 0 0 4.15 1.32V7.28s-1.66.08-3.25-1.46z"/></svg>
+      </a>
+    </div>
+  </div>
+</div>
+
+<header class="site">
+  <div class="header-row wrap">
+    <div class="brand"><h1 id="brandName">Souqly</h1></div>
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="searchInput" placeholder="Search products…">
+    </div>
+    <div class="header-cta">
+      <a href="#catalogue" class="btn btn-accent" style="padding:9px 18px;font-size:13px;">Shop Now</a>
+    </div>
+  </div>
+</header>
+
+<nav class="catnav">
+  <div class="catnav-row" id="catNavRow"></div>
+</nav>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <h2>Order today,<br><em>pay when it arrives.</em></h2>
+      <p class="lede">Shop with Cash on Delivery, delivered anywhere in Pakistan — no advance payment, no risk.</p>
+      <div class="badge-row">
+        <div class="badge"><svg viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>100% Cash on Delivery</div>
+        <div class="badge"><svg viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>Nationwide Delivery</div>
+      </div>
+      <div class="cta-row">
+        <a href="#catalogue" class="btn btn-accent">Browse Catalogue</a>
+        <a id="waHero" href="#" target="_blank" rel="noopener" class="btn btn-outline">Chat on WhatsApp</a>
+      </div>
+    </div>
+    <div class="tag-card">
+      <div class="rc-title">How ordering works</div>
+      <div class="rc-line"><span class="num">1</span><span>Choose a product and tap "Order Now"</span></div>
+      <div class="rc-line"><span class="num">2</span><span>Fill in your delivery details</span></div>
+      <div class="rc-line"><span class="num">3</span><span>Our rider brings it to your door</span></div>
+      <div class="rc-line"><span class="num">4</span><span>Pay cash on arrival — that's it</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="mini-trust">
+  <div class="wrap">
+    <div class="item"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1.5 15-5-5 1.41-1.41L10.5 13.17l7.09-7.09L19 7.5l-8.5 9.5z"/></svg>Verified Seller</div>
+    <div class="item"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1.5 15-5-5 1.41-1.41L10.5 13.17l7.09-7.09L19 7.5l-8.5 9.5z"/></svg>No Advance Payment</div>
+    <div class="item"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1.5 15-5-5 1.41-1.41L10.5 13.17l7.09-7.09L19 7.5l-8.5 9.5z"/></svg>Fast Dispatch</div>
+  </div>
+</div>
+
+<section class="section" id="catalogue">
+  <div class="section-head">
+    <h2 id="catHeading">All Products</h2>
+    <span class="count mono" id="prodCount">— items</span>
+  </div>
+  <div class="grid" id="productGrid">
+    <div class="empty-state">Loading products…</div>
+  </div>
+</section>
+
+<a class="fab-wa" id="waFab" href="#" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21h.01c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm5.79 14.13c-.24.68-1.4 1.3-1.94 1.38-.5.08-1.12.11-1.81-.11-.42-.13-.95-.31-1.64-.6-2.88-1.24-4.75-4.13-4.9-4.32-.14-.19-1.17-1.56-1.17-2.98s.73-2.11.99-2.4c.26-.29.57-.36.76-.36l.55.01c.17.01.41-.06.64.49.24.58.81 2 .88 2.15.07.15.12.32.02.51-.1.19-.15.31-.29.48-.15.17-.31.37-.44.5-.15.15-.3.31-.13.6.17.29.76 1.25 1.63 2.02 1.12 1 2.06 1.31 2.35 1.46.29.15.46.13.63-.05.17-.19.71-.83.9-1.11.19-.29.38-.24.64-.14.26.1 1.65.78 1.93.92.29.15.48.22.55.34.07.13.07.72-.17 1.4z"/></svg>
+</a>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <div class="brandfoot" id="brandFoot">Souqly</div>
+      <p id="footTagline">Quality products delivered anywhere in Pakistan with Cash on Delivery — trusted, fast, and easy.</p>
+    </div>
+    <div>
+      <h4>Contact</h4>
+      <a id="waFoot" href="#" target="_blank" rel="noopener">WhatsApp</a>
+      <a id="igFoot" href="#" target="_blank" rel="noopener">Instagram</a>
+      <a id="ttFoot" href="#" target="_blank" rel="noopener">TikTok</a>
+    </div>
+    <div>
+      <h4>Shopping</h4>
+      <a href="#catalogue">Catalogue</a>
+      <a href="#" onclick="document.getElementById('searchInput').focus();return false;">Search Products</a>
+    </div>
+  </div>
+  <div class="foot-bottom wrap">© <span id="yearNow"></span> Souqly — Cash on Delivery, delivered across Pakistan.</div>
+</footer>
+
+<!-- Order modal -->
+<div class="overlay" id="orderOverlay">
+  <div class="modal">
+    <button class="close" id="closeModal">×</button>
+    <div id="orderFormView">
+      <h3 id="modalProductName">Product</h3>
+      <div class="sub" id="modalProductPrice">Rs. 0</div>
+      <form id="orderForm">
+        <div id="optionFields"></div>
+        <div class="field">
+          <label>Full Name</label>
+          <input type="text" id="custName" required>
+        </div>
+        <div class="field">
+          <label>Phone Number</label>
+          <input type="tel" id="custPhone" required placeholder="03xx-xxxxxxx">
+        </div>
+        <div class="field">
+          <label>Full Address</label>
+          <textarea id="custAddress" required placeholder="House #, street, area"></textarea>
+        </div>
+        <div class="field">
+          <label>City</label>
+          <input type="text" id="custCity" required>
+        </div>
+        <div class="field">
+          <label>Quantity</label>
+          <input type="number" id="custQty" min="1" value="1" required>
+        </div>
+        <button type="submit" class="btn-primary-full">Place COD Order</button>
+        <div class="msg" id="orderErr">Something went wrong — please try again.</div>
+      </form>
+    </div>
+    <div class="success" id="orderSuccess">
+      <h3>Order received!</h3>
+      <p class="sub">Save this token — we'll confirm by WhatsApp or call shortly.</p>
+      <div class="token mono" id="orderToken">#000000</div>
+      <p style="font-size:13px;color:var(--ink-soft)">Pay cash when your order arrives.</p>
+      <button class="btn-primary-full" id="successClose">Done</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+const firebaseConfig = {
+  apiKey: "AIzaSyB6x-2VJqkxBKAHVn2B7cbJCZjkPJXMgG4",
+  authDomain: "souqly-59ea7.firebaseapp.com",
+  projectId: "souqly-59ea7",
+  storageBucket: "souqly-59ea7.firebasestorage.app",
+  messagingSenderId: "190673646575",
+  appId: "1:190673646575:web:867d90b1263c1c6b99fc1a"
+};
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+import {
+  getFirestore, collection, doc, addDoc, onSnapshot, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const productsCol = collection(db, "products");
+const ordersCol = collection(db, "orders");
+const settingsDocRef = doc(db, "settings", "store");
+
+document.getElementById("yearNow").textContent = new Date().getFullYear();
+
+let products = [];
+let activeCategory = "All";
+let searchTerm = "";
+
+/* ---------------- settings (brand, socials) ---------------- */
+onSnapshot(settingsDocRef, (snap)=>{
+  const d = snap.exists() ? snap.data() : {};
+  const brand = d.brandName || "Souqly";
+  document.getElementById("brandName").textContent = brand;
+  document.getElementById("brandFoot").textContent = brand;
+  document.title = brand + " — Shop with Cash on Delivery";
+  if(d.tagline) document.getElementById("footTagline").textContent = d.tagline;
+
+  const wa = (d.whatsapp || "").replace(/\D/g,"");
+  const waLink = wa ? `https://wa.me/${wa}` : "#";
+  ["waTop","waHero","waFoot","waFab"].forEach(id=>document.getElementById(id).href = waLink);
+  document.getElementById("igTop").href = d.instagram || "#";
+  document.getElementById("igFoot").href = d.instagram || "#";
+  document.getElementById("ttTop").href = d.tiktok || "#";
+  document.getElementById("ttFoot").href = d.tiktok || "#";
+});
+
+/* ---------------- products (live) ---------------- */
+onSnapshot(productsCol, (snap)=>{
+  products = snap.docs.map(d=>({ id:d.id, ...d.data() })).filter(p=>p.active !== false);
+  renderCategoryNav();
+  renderGrid();
+});
+
+function renderCategoryNav(){
+  const cats = [...new Set(products.map(p=>(p.category||"").trim()).filter(Boolean))].sort();
+  const row = document.getElementById("catNavRow");
+  const inline = cats.slice(0,5);
+  const overflow = cats.slice(5);
+
+  let html = `<button class="chip ${activeCategory==='All'?'active':''}" data-cat="All">All</button>`;
+  inline.forEach(c=>{
+    html += `<button class="chip ${activeCategory===c?'active':''}" data-cat="${escapeHtml(c)}">${escapeHtml(c)}</button>`;
+  });
+  if(overflow.length){
+    html += `<div class="more-wrap">
+      <button class="chip" id="moreBtn">More ▾</button>
+      <div class="more-dd" id="moreDd">
+        ${overflow.map(c=>`<button data-cat="${escapeHtml(c)}">${escapeHtml(c)}</button>`).join("")}
+      </div>
+    </div>`;
+  }
+  row.innerHTML = html;
+
+  row.querySelectorAll("[data-cat]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      activeCategory = btn.dataset.cat;
+      document.getElementById("moreDd")?.classList.remove("open");
+      renderCategoryNav();
+      renderGrid();
+    });
+  });
+  const moreBtn = document.getElementById("moreBtn");
+  if(moreBtn){
+    moreBtn.addEventListener("click",(e)=>{
+      e.stopPropagation();
+      document.getElementById("moreDd").classList.toggle("open");
+    });
+  }
+}
+document.addEventListener("click",()=>document.getElementById("moreDd")?.classList.remove("open"));
+
+document.getElementById("searchInput").addEventListener("input",(e)=>{
+  searchTerm = e.target.value.trim().toLowerCase();
+  renderGrid();
+});
+
+function renderGrid(){
+  let list = products;
+  if(activeCategory !== "All") list = list.filter(p=>(p.category||"").trim() === activeCategory);
+  if(searchTerm){
+    list = list.filter(p=>
+      (p.name||"").toLowerCase().includes(searchTerm) ||
+      (p.description||"").toLowerCase().includes(searchTerm) ||
+      (p.category||"").toLowerCase().includes(searchTerm)
+    );
+  }
+  document.getElementById("catHeading").textContent = activeCategory === "All" ? "All Products" : activeCategory;
+  document.getElementById("prodCount").textContent = list.length + " item" + (list.length===1?"":"s");
+  const grid = document.getElementById("productGrid");
+  if(list.length === 0){
+    grid.innerHTML = `<div class="empty-state">No products found — try a different search or category.</div>`;
+    return;
+  }
+  grid.innerHTML = list.map(p=>{
+    const firstImg = (p.imageUrl||"").split(",")[0].trim();
+    return `
+    <div class="card">
+      <div class="thumb">
+        ${firstImg ? `<img src="${escapeHtml(firstImg)}" alt="${escapeHtml(p.name)}">` : ""}
+        ${p.category ? `<span class="cat-pill">${escapeHtml(p.category)}</span>` : ""}
+      </div>
+      <div class="body">
+        <h3>${escapeHtml(p.name)}</h3>
+        <div class="desc">${escapeHtml(p.description||"")}</div>
+        <div class="price-row">
+          <span class="price">Rs. ${Number(p.price||0).toLocaleString()}</span>
+          <span class="mini-badges"><span>COD</span></span>
+        </div>
+        <button class="order-btn" data-id="${p.id}">Order Now</button>
+      </div>
+    </div>`;
+  }).join("");
+  grid.querySelectorAll(".order-btn").forEach(btn=>{
+    btn.addEventListener("click", ()=>openOrderModal(btn.dataset.id));
+  });
+}
+
+/* ---------------- order modal ---------------- */
+let activeProduct = null;
+function openOrderModal(id){
+  activeProduct = products.find(p=>p.id===id);
+  if(!activeProduct) return;
+  document.getElementById("modalProductName").textContent = activeProduct.name;
+  document.getElementById("modalProductPrice").textContent = "Rs. " + Number(activeProduct.price||0).toLocaleString() + " · Cash on Delivery";
+
+  const optWrap = document.getElementById("optionFields");
+  optWrap.innerHTML = "";
+  (activeProduct.options||[]).forEach((opt,i)=>{
+    const values = (opt.values||[]);
+    optWrap.innerHTML += `
+      <div class="field">
+        <label>${escapeHtml(opt.name)}</label>
+        <select data-opt="${escapeHtml(opt.name)}" required>
+          ${values.map(v=>`<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join("")}
+        </select>
+      </div>`;
+  });
+
+  document.getElementById("orderForm").reset();
+  document.getElementById("custQty").value = 1;
+  document.getElementById("orderFormView").style.display = "block";
+  document.getElementById("orderSuccess").classList.remove("open");
+  document.getElementById("orderErr").classList.remove("open");
+  document.getElementById("orderOverlay").classList.add("open");
+}
+function closeOrderModal(){ document.getElementById("orderOverlay").classList.remove("open"); }
+document.getElementById("closeModal").addEventListener("click", closeOrderModal);
+document.getElementById("successClose").addEventListener("click", closeOrderModal);
+document.getElementById("orderOverlay").addEventListener("click",(e)=>{ if(e.target.id==="orderOverlay") closeOrderModal(); });
+
+document.getElementById("orderForm").addEventListener("submit", async (e)=>{
+  e.preventDefault();
+  if(!activeProduct) return;
+  const qty = Number(document.getElementById("custQty").value)||1;
+  const selectedOptions = {};
+  document.querySelectorAll("#optionFields [data-opt]").forEach(sel=>{
+    selectedOptions[sel.dataset.opt] = sel.value;
+  });
+  const order = {
+    productId: activeProduct.id,
+    productName: activeProduct.name,
+    price: activeProduct.price,
+    selectedOptions,
+    qty,
+    total: (activeProduct.price||0) * qty,
+    customerName: document.getElementById("custName").value.trim(),
+    phone: document.getElementById("custPhone").value.trim(),
+    address: document.getElementById("custAddress").value.trim(),
+    city: document.getElementById("custCity").value.trim(),
+    status: "new",
+    createdAt: serverTimestamp()
+  };
+  try{
+    const ref = await addDoc(ordersCol, order);
+    document.getElementById("orderFormView").style.display = "none";
+    document.getElementById("orderSuccess").classList.add("open");
+    document.getElementById("orderToken").textContent = "#" + ref.id.slice(-6).toUpperCase();
+  }catch(err){
+    document.getElementById("orderErr").classList.add("open");
+    console.error(err);
+  }
+});
+
+function escapeHtml(str){
+  return String(str||"").replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+</script>
+</body>
+</html>
