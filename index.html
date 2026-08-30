@@ -153,6 +153,41 @@
   .success .token{font-family:'IBM Plex Mono',monospace;font-size:26px;font-weight:600;color:var(--primary);border:2px dashed var(--primary);padding:10px 16px;display:inline-block;margin:14px 0;border-radius:8px;}
   .msg{font-size:12px;color:var(--alert);margin-top:6px;display:none;}
   .msg.open{display:block;}
+
+  /* ---------------- product detail modal ---------------- */
+  .card .thumb, .card h3, .card .desc{cursor:pointer;}
+  .detail-modal{background:var(--surface);max-width:560px;width:100%;padding:0;max-height:92vh;overflow:auto;position:relative;border-radius:14px;}
+  .detail-modal .close{position:absolute;top:14px;right:16px;background:rgba(255,255,255,.9);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--ink);z-index:5;line-height:1;}
+  .gallery-main{aspect-ratio:1/1;background:#ECE6D8;overflow:hidden;position:relative;}
+  .gallery-main img, .gallery-main video{width:100%;height:100%;object-fit:cover;}
+  .gallery-main iframe{width:100%;height:100%;border:none;}
+  .gallery-thumbs{display:flex;gap:8px;padding:10px 16px;overflow-x:auto;}
+  .gallery-thumbs .gthumb{width:52px;height:52px;flex-shrink:0;border-radius:6px;overflow:hidden;border:2px solid transparent;cursor:pointer;background:#ECE6D8;}
+  .gallery-thumbs .gthumb.active{border-color:var(--primary);}
+  .gallery-thumbs .gthumb img,.gallery-thumbs .gthumb video{width:100%;height:100%;object-fit:cover;}
+  .detail-body{padding:18px 20px 22px;}
+  .detail-body .cat-pill-static{display:inline-block;background:var(--paper);color:var(--ink-soft);font-family:'IBM Plex Mono',monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;padding:4px 10px;border-radius:999px;margin-bottom:8px;}
+  .detail-body h2{font-size:22px;margin-bottom:4px;}
+  .detail-body .detail-price{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:600;color:var(--primary-dark);margin-bottom:12px;}
+  .detail-body .detail-desc{font-size:14px;color:var(--ink-soft);line-height:1.6;margin-bottom:16px;white-space:pre-wrap;}
+  .opt-group{margin-bottom:16px;}
+  .opt-group .opt-label{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft);margin-bottom:8px;}
+  .opt-pills{display:flex;gap:8px;flex-wrap:wrap;}
+  .opt-pill{padding:8px 15px;border:1.5px solid var(--line);border-radius:999px;background:var(--surface);font-size:13px;color:var(--ink);}
+  .opt-pill.selected{border-color:var(--primary);background:var(--primary);color:#fff;}
+  .detail-cta{display:flex;flex-direction:column;gap:10px;margin-top:18px;}
+  .cta-full{width:100%;justify-content:center;padding:13px;border-radius:8px;font-weight:700;font-size:14px;display:flex;align-items:center;gap:8px;}
+  .cta-full svg{width:17px;height:17px;fill:currentColor;flex-shrink:0;}
+  .cta-cod{background:var(--ink);color:#fff;}
+  .cta-cod:hover{background:var(--primary);}
+  .cta-wa{background:#1EBE57;color:#fff;}
+  .cta-wa:hover{background:#189c48;}
+  .cta-ig{background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff;}
+  .cta-ig:hover{opacity:.9;}
+
+  /* ---------------- toast ---------------- */
+  .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;box-shadow:var(--shadow-lg);z-index:200;opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;text-align:center;max-width:88vw;}
+  .toast.open{opacity:1;transform:translateX(-50%) translateY(0);}
 </style>
 </head>
 <body>
@@ -304,6 +339,38 @@
   </div>
 </div>
 
+<!-- Product detail modal -->
+<div class="overlay" id="detailOverlay">
+  <div class="detail-modal">
+    <button class="close" id="closeDetail">×</button>
+    <div class="gallery-main" id="galleryMain"></div>
+    <div class="gallery-thumbs" id="galleryThumbs"></div>
+    <div class="detail-body">
+      <span class="cat-pill-static" id="detailCategory"></span>
+      <h2 id="detailName">Product</h2>
+      <div class="detail-price mono" id="detailPrice">Rs. 0</div>
+      <div class="detail-desc" id="detailDesc"></div>
+      <div id="detailOptions"></div>
+      <div class="detail-cta">
+        <button class="cta-full cta-cod" id="detailOrderCod">
+          <svg viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          Order Now — Cash on Delivery
+        </button>
+        <button class="cta-full cta-wa" id="detailOrderWa">
+          <svg viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21h.01c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm5.79 14.13c-.24.68-1.4 1.3-1.94 1.38-.5.08-1.12.11-1.81-.11-.42-.13-.95-.31-1.64-.6-2.88-1.24-4.75-4.13-4.9-4.32-.14-.19-1.17-1.56-1.17-2.98s.73-2.11.99-2.4c.26-.29.57-.36.76-.36l.55.01c.17.01.41-.06.64.49.24.58.81 2 .88 2.15.07.15.12.32.02.51-.1.19-.15.31-.29.48-.15.17-.31.37-.44.5-.15.15-.3.31-.13.6.17.29.76 1.25 1.63 2.02 1.12 1 2.06 1.31 2.35 1.46.29.15.46.13.63-.05.17-.19.71-.83.9-1.11.19-.29.38-.24.64-.14.26.1 1.65.78 1.93.92.29.15.48.22.55.34.07.13.07.72-.17 1.4z"/></svg>
+          Order via WhatsApp
+        </button>
+        <button class="cta-full cta-ig" id="detailOrderIg">
+          <svg viewBox="0 0 24 24"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41-.56-.22-.96-.48-1.38-.9-.42-.42-.68-.82-.9-1.38-.16-.42-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41 1.27-.06 1.65-.07 4.85-.07M12 0C8.74 0 8.33.01 7.05.07c-1.28.06-2.15.26-2.91.56-.79.31-1.46.72-2.13 1.38C1.35 2.68.94 3.35.63 4.14.33 4.9.13 5.77.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.28.26 2.15.56 2.91.31.79.72 1.46 1.38 2.13.66.66 1.33 1.07 2.12 1.38.76.3 1.63.5 2.91.56 1.28.06 1.69.07 4.95.07s3.67-.01 4.95-.07c1.28-.06 2.15-.26 2.91-.56.79-.31 1.46-.72 2.12-1.38.66-.66 1.07-1.33 1.38-2.13.3-.76.5-1.63.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.28-.26-2.15-.56-2.91-.31-.79-.72-1.46-1.38-2.12C19.32 1.35 18.65.94 17.86.63c-.76-.3-1.63-.5-2.91-.56C13.67.01 13.26 0 12 0zm0 5.84A6.16 6.16 0 1 0 12 18.16 6.16 6.16 0 0 0 12 5.84zm0 10.16A4 4 0 1 1 12 8a4 4 0 0 1 0 8zm6.4-10.4a1.44 1.44 0 1 1-2.88 0 1.44 1.44 0 0 1 2.88 0z"/></svg>
+          Order via Instagram DM
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
 <script type="module">
 const firebaseConfig = {
   apiKey: "AIzaSyB6x-2VJqkxBKAHVn2B7cbJCZjkPJXMgG4",
@@ -330,23 +397,30 @@ document.getElementById("yearNow").textContent = new Date().getFullYear();
 let products = [];
 let activeCategory = "All";
 let searchTerm = "";
+let storeWaNumber = "";     // digits only, e.g. 923001234567
+let storeIgUsername = "";   // e.g. souqly.pk
+let storeBrandName = "Souqly";
 
 /* ---------------- settings (brand, socials) ---------------- */
 onSnapshot(settingsDocRef, (snap)=>{
   const d = snap.exists() ? snap.data() : {};
   const brand = d.brandName || "Souqly";
+  storeBrandName = brand;
   document.getElementById("brandName").textContent = brand;
   document.getElementById("brandFoot").textContent = brand;
   document.title = brand + " — Shop with Cash on Delivery";
   if(d.tagline) document.getElementById("footTagline").textContent = d.tagline;
 
-  const wa = (d.whatsapp || "").replace(/\D/g,"");
-  const waLink = wa ? `https://wa.me/${wa}` : "#";
+  storeWaNumber = (d.whatsapp || "").replace(/\D/g,"");
+  const waLink = storeWaNumber ? `https://wa.me/${storeWaNumber}` : "#";
   ["waTop","waHero","waFoot","waFab"].forEach(id=>document.getElementById(id).href = waLink);
   document.getElementById("igTop").href = d.instagram || "#";
   document.getElementById("igFoot").href = d.instagram || "#";
   document.getElementById("ttTop").href = d.tiktok || "#";
   document.getElementById("ttFoot").href = d.tiktok || "#";
+
+  const igMatch = (d.instagram||"").match(/instagram\.com\/([^/?]+)/i);
+  storeIgUsername = igMatch ? igMatch[1] : "";
 });
 
 /* ---------------- products (live) ---------------- */
@@ -417,16 +491,16 @@ function renderGrid(){
     return;
   }
   grid.innerHTML = list.map(p=>{
-    const firstImg = (p.imageUrl||"").split(",")[0].trim();
+    const firstMedia = (p.imageUrl||"").split(",")[0].trim();
     return `
     <div class="card">
-      <div class="thumb">
-        ${firstImg ? `<img src="${escapeHtml(firstImg)}" alt="${escapeHtml(p.name)}">` : ""}
+      <div class="thumb" data-open="${p.id}">
+        ${firstMedia ? mediaHtml(firstMedia, {muted:true}) : ""}
         ${p.category ? `<span class="cat-pill">${escapeHtml(p.category)}</span>` : ""}
       </div>
       <div class="body">
-        <h3>${escapeHtml(p.name)}</h3>
-        <div class="desc">${escapeHtml(p.description||"")}</div>
+        <h3 data-open="${p.id}">${escapeHtml(p.name)}</h3>
+        <div class="desc" data-open="${p.id}">${escapeHtml(p.description||"")}</div>
         <div class="price-row">
           <span class="price">Rs. ${Number(p.price||0).toLocaleString()}</span>
           <span class="mini-badges"><span>COD</span></span>
@@ -438,11 +512,31 @@ function renderGrid(){
   grid.querySelectorAll(".order-btn").forEach(btn=>{
     btn.addEventListener("click", ()=>openOrderModal(btn.dataset.id));
   });
+  grid.querySelectorAll("[data-open]").forEach(el=>{
+    el.addEventListener("click", ()=>openDetailModal(el.dataset.open));
+  });
+}
+
+/* ---------------- media helpers (images + videos) ---------------- */
+function ytId(url){
+  const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{11})/);
+  return m ? m[1] : null;
+}
+function isVideoFile(url){ return /\.(mp4|webm|mov|m4v)(\?.*)?$/i.test(url); }
+function mediaHtml(url, opts={}){
+  const yt = ytId(url);
+  if(yt){
+    return `<iframe src="https://www.youtube.com/embed/${yt}" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+  }
+  if(isVideoFile(url)){
+    return `<video src="${escapeHtml(url)}" controls ${opts.muted?'muted':''} playsinline preload="metadata"></video>`;
+  }
+  return `<img src="${escapeHtml(url)}" alt="">`;
 }
 
 /* ---------------- order modal ---------------- */
 let activeProduct = null;
-function openOrderModal(id){
+function openOrderModal(id, preSelected){
   activeProduct = products.find(p=>p.id===id);
   if(!activeProduct) return;
   document.getElementById("modalProductName").textContent = activeProduct.name;
@@ -452,11 +546,12 @@ function openOrderModal(id){
   optWrap.innerHTML = "";
   (activeProduct.options||[]).forEach((opt,i)=>{
     const values = (opt.values||[]);
+    const preVal = preSelected && preSelected[opt.name];
     optWrap.innerHTML += `
       <div class="field">
         <label>${escapeHtml(opt.name)}</label>
         <select data-opt="${escapeHtml(opt.name)}" required>
-          ${values.map(v=>`<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join("")}
+          ${values.map(v=>`<option value="${escapeHtml(v)}" ${preVal===v?'selected':''}>${escapeHtml(v)}</option>`).join("")}
         </select>
       </div>`;
   });
@@ -505,6 +600,127 @@ document.getElementById("orderForm").addEventListener("submit", async (e)=>{
     console.error(err);
   }
 });
+
+/* ---------------- product detail modal ---------------- */
+let detailProduct = null;
+let detailMedia = [];
+let detailMediaIndex = 0;
+let detailSelectedOptions = {};
+
+function openDetailModal(id){
+  detailProduct = products.find(p=>p.id===id);
+  if(!detailProduct) return;
+  detailMedia = (detailProduct.imageUrl||"").split(",").map(s=>s.trim()).filter(Boolean);
+  detailMediaIndex = 0;
+  detailSelectedOptions = {};
+  (detailProduct.options||[]).forEach(opt=>{
+    if(opt.values && opt.values.length) detailSelectedOptions[opt.name] = opt.values[0];
+  });
+
+  document.getElementById("detailCategory").textContent = detailProduct.category || "";
+  document.getElementById("detailCategory").style.display = detailProduct.category ? "inline-block" : "none";
+  document.getElementById("detailName").textContent = detailProduct.name;
+  document.getElementById("detailPrice").textContent = "Rs. " + Number(detailProduct.price||0).toLocaleString();
+  document.getElementById("detailDesc").textContent = detailProduct.description || "";
+
+  renderGallery();
+  renderDetailOptions();
+
+  document.getElementById("detailOverlay").classList.add("open");
+}
+function closeDetailModal(){ document.getElementById("detailOverlay").classList.remove("open"); }
+document.getElementById("closeDetail").addEventListener("click", closeDetailModal);
+document.getElementById("detailOverlay").addEventListener("click",(e)=>{ if(e.target.id==="detailOverlay") closeDetailModal(); });
+
+function renderGallery(){
+  const main = document.getElementById("galleryMain");
+  const thumbs = document.getElementById("galleryThumbs");
+  if(detailMedia.length === 0){
+    main.innerHTML = "";
+    thumbs.innerHTML = "";
+    return;
+  }
+  main.innerHTML = mediaHtml(detailMedia[detailMediaIndex], {muted:false});
+  if(detailMedia.length > 1){
+    thumbs.innerHTML = detailMedia.map((m,i)=>`
+      <div class="gthumb ${i===detailMediaIndex?'active':''}" data-idx="${i}">${mediaHtml(m,{muted:true})}</div>
+    `).join("");
+    thumbs.querySelectorAll("[data-idx]").forEach(el=>{
+      el.addEventListener("click", ()=>{ detailMediaIndex = Number(el.dataset.idx); renderGallery(); });
+    });
+  } else {
+    thumbs.innerHTML = "";
+  }
+}
+
+function renderDetailOptions(){
+  const wrap = document.getElementById("detailOptions");
+  const opts = detailProduct.options || [];
+  if(opts.length === 0){ wrap.innerHTML = ""; return; }
+  wrap.innerHTML = opts.map(opt=>`
+    <div class="opt-group">
+      <div class="opt-label">${escapeHtml(opt.name)}</div>
+      <div class="opt-pills">
+        ${(opt.values||[]).map(v=>`
+          <button type="button" class="opt-pill ${detailSelectedOptions[opt.name]===v?'selected':''}" data-optname="${escapeHtml(opt.name)}" data-optval="${escapeHtml(v)}">${escapeHtml(v)}</button>
+        `).join("")}
+      </div>
+    </div>
+  `).join("");
+  wrap.querySelectorAll(".opt-pill").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      detailSelectedOptions[btn.dataset.optname] = btn.dataset.optval;
+      renderDetailOptions();
+    });
+  });
+}
+
+function buildOrderMessage(){
+  const opts = Object.keys(detailSelectedOptions).map(k=>`${k}: ${detailSelectedOptions[k]}`).join(", ");
+  return `Hi! I'd like to order:\n\n` +
+    `Product: ${detailProduct.name}\n` +
+    (opts ? `Options: ${opts}\n` : "") +
+    `Price: Rs. ${Number(detailProduct.price||0).toLocaleString()}\n\n` +
+    `My details:\nName: \nPhone: \nAddress: \nCity: \nQuantity: 1`;
+}
+
+document.getElementById("detailOrderCod").addEventListener("click", ()=>{
+  const id = detailProduct.id;
+  const opts = { ...detailSelectedOptions };
+  closeDetailModal();
+  openOrderModal(id, opts);
+});
+
+document.getElementById("detailOrderWa").addEventListener("click", ()=>{
+  if(!storeWaNumber){
+    showToast("Store hasn't added a WhatsApp number yet.");
+    return;
+  }
+  const text = encodeURIComponent(buildOrderMessage());
+  window.open(`https://wa.me/${storeWaNumber}?text=${text}`, "_blank");
+});
+
+document.getElementById("detailOrderIg").addEventListener("click", async ()=>{
+  if(!storeIgUsername){
+    showToast("Store hasn't added an Instagram link yet.");
+    return;
+  }
+  const text = buildOrderMessage();
+  try{
+    await navigator.clipboard.writeText(text);
+    showToast("Order details copied — paste them in the Instagram chat.");
+  }catch(e){ /* clipboard may be blocked; still open the chat */ }
+  window.open(`https://ig.me/m/${storeIgUsername}`, "_blank");
+});
+
+let toastTimer = null;
+function showToast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("open");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove("open"), 3200);
+}
 
 function escapeHtml(str){
   return String(str||"").replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
